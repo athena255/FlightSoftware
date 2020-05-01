@@ -7,33 +7,34 @@
 ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry, "adcs_controller", offset),
-    adcs_system(_adcs)
+      ControlTaskState(registry),
+      adcs_system(_adcs)
     {
         //find command statefields
-        adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
+        adcs_state_fp = this->find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
-        rwa_mode_fp = find_writable_field<unsigned char>("adcs_cmd.rwa_mode", __FILE__, __LINE__);
-        rwa_speed_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_speed_cmd", __FILE__, __LINE__);
-        rwa_torque_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.rwa_torque_cmd", __FILE__, __LINE__);
-        rwa_speed_filter_fp = find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
-        rwa_ramp_filter_fp = find_writable_field<float>("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
+        rwa_mode_fp = this->find_writable_field<unsigned char>("adcs_cmd.rwa_mode", __FILE__, __LINE__);
+        rwa_speed_cmd_fp = this->find_writable_field<f_vector_t>("adcs_cmd.rwa_speed_cmd", __FILE__, __LINE__);
+        rwa_torque_cmd_fp = this->find_writable_field<f_vector_t>("adcs_cmd.rwa_torque_cmd", __FILE__, __LINE__);
+        rwa_speed_filter_fp = this->find_writable_field<float>("adcs_cmd.rwa_speed_filter", __FILE__, __LINE__);
+        rwa_ramp_filter_fp = this->find_writable_field<float>("adcs_cmd.rwa_ramp_filter", __FILE__, __LINE__);
 
-        mtr_mode_fp = find_writable_field<unsigned char>("adcs_cmd.mtr_mode", __FILE__, __LINE__);
-        mtr_cmd_fp = find_writable_field<f_vector_t>("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
-        mtr_limit_fp = find_writable_field<float>("adcs_cmd.mtr_limit", __FILE__, __LINE__);
+        mtr_mode_fp = this->find_writable_field<unsigned char>("adcs_cmd.mtr_mode", __FILE__, __LINE__);
+        mtr_cmd_fp = this->find_writable_field<f_vector_t>("adcs_cmd.mtr_cmd", __FILE__, __LINE__);
+        mtr_limit_fp = this->find_writable_field<float>("adcs_cmd.mtr_limit", __FILE__, __LINE__);
 
-        ssa_mode_fp = find_readable_field<unsigned char>("adcs_monitor.ssa_mode", __FILE__, __LINE__);
-        ssa_voltage_filter_fp = find_writable_field<float>("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
+        ssa_mode_fp = this->find_readable_field<unsigned char>("adcs_monitor.ssa_mode", __FILE__, __LINE__);
+        ssa_voltage_filter_fp = this->find_writable_field<float>("adcs_cmd.ssa_voltage_filter", __FILE__, __LINE__);
 
-        mag1_mode_fp = find_writable_field<unsigned char>("adcs_cmd.mag1_mode", __FILE__, __LINE__);
-        mag2_mode_fp = find_writable_field<unsigned char>("adcs_cmd.mag2_mode", __FILE__, __LINE__);
-        imu_mag_filter_fp = find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
-        imu_gyr_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
-        imu_gyr_temp_filter_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
-        imu_gyr_temp_kp_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_kp", __FILE__, __LINE__);
-        imu_gyr_temp_ki_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_ki", __FILE__, __LINE__);
-        imu_gyr_temp_kd_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_kd", __FILE__, __LINE__);
-        imu_gyr_temp_desired_fp = find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
+        mag1_mode_fp = this->find_writable_field<unsigned char>("adcs_cmd.mag1_mode", __FILE__, __LINE__);
+        mag2_mode_fp = this->find_writable_field<unsigned char>("adcs_cmd.mag2_mode", __FILE__, __LINE__);
+        imu_mag_filter_fp = this->find_writable_field<float>("adcs_cmd.imu_mag_filter", __FILE__, __LINE__);
+        imu_gyr_filter_fp = this->find_writable_field<float>("adcs_cmd.imu_gyr_filter", __FILE__, __LINE__);
+        imu_gyr_temp_filter_fp = this->find_writable_field<float>("adcs_cmd.imu_gyr_temp_filter", __FILE__, __LINE__);
+        imu_gyr_temp_kp_fp = this->find_writable_field<float>("adcs_cmd.imu_gyr_temp_kp", __FILE__, __LINE__);
+        imu_gyr_temp_ki_fp = this->find_writable_field<float>("adcs_cmd.imu_gyr_temp_ki", __FILE__, __LINE__);
+        imu_gyr_temp_kd_fp = this->find_writable_field<float>("adcs_cmd.imu_gyr_temp_kd", __FILE__, __LINE__);
+        imu_gyr_temp_desired_fp = this->find_writable_field<float>("adcs_cmd.imu_gyr_temp_desired", __FILE__, __LINE__);
     
         
         //fill vector of pointers to statefields for havt
@@ -44,7 +45,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_cmd.havt_reset");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_cmd_reset_vector_fp.emplace_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+            havt_cmd_reset_vector_fp.emplace_back(this->find_writable_field<bool>(buffer, __FILE__, __LINE__));
         }
         havt_cmd_disable_vector_fp.reserve(adcs::havt::Index::_LENGTH);
         for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++)
@@ -52,7 +53,7 @@ ADCSBoxController::ADCSBoxController(StateFieldRegistry &registry,
             std::memset(buffer, 0, sizeof(buffer));
             sprintf(buffer,"adcs_cmd.havt_disable");
             sprintf(buffer + strlen(buffer), "%u", idx);
-            havt_cmd_disable_vector_fp.emplace_back(find_writable_field<bool>(buffer, __FILE__, __LINE__));
+            havt_cmd_disable_vector_fp.emplace_back(this->find_writable_field<bool>(buffer, __FILE__, __LINE__));
         }
     }
 

@@ -26,7 +26,7 @@
 #include "UplinkConsumer.h"
 #include "PropController.hpp"
 
-class MainControlLoop : public ControlTask<void> {
+class MainControlLoop : public ControlTask<void>, public ControlTaskState {
    protected:
     FieldCreatorTask field_creator_task;
     ClockManager clock_manager;

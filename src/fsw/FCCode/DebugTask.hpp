@@ -3,7 +3,7 @@
 
 #include "TimedControlTask.hpp"
 
-class DebugTask : public TimedControlTask<void> {
+class DebugTask : public TimedControlTask<void>, public ControlTaskState {
 public:
   /**
    * @brief Construct a new Debug Task object

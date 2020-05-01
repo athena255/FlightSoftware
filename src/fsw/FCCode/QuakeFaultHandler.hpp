@@ -24,7 +24,7 @@
  * 
  * TODO unit test the shit out of this mission manager behavior.
  */
-class QuakeFaultHandler : public FaultHandlerMachine {
+class QuakeFaultHandler : public FaultHandlerMachine, public ControlTaskState {
   public:
     #ifdef UNIT_TEST
     friend class TestFixture;

@@ -6,7 +6,7 @@
 #include "TimedControlTask.hpp"
 #include "Drivers/Gomspace.hpp"
 
-class GomspaceController : public TimedControlTask<void> {
+class GomspaceController : public TimedControlTask<void>, public ControlTaskState {
    public:
     
     /**

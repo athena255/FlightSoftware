@@ -7,7 +7,7 @@
  * @brief Class for a simple fault handler that depends only on a single
  * fault flag's state.
  */
-class SimpleFaultHandler : public FaultHandlerMachine {
+class SimpleFaultHandler : public FaultHandlerMachine, public ControlTaskState {
   public:
     /**
      * @brief Construct a new Simple Fault Handler.

@@ -10,7 +10,7 @@
  * between sending commands and reading expected responses.
  */
 
-class QuakeControlTask 
+class QuakeControlTask
 {
 public:
   #ifndef DESKTOP

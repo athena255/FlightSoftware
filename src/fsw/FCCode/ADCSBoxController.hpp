@@ -10,7 +10,7 @@
  * Note this CT doesn't do any computing, just actuation
  * This CT is inteded to only do hardware calls
  */
-class ADCSBoxController : public TimedControlTask<void>
+class ADCSBoxController : public TimedControlTask<void>, public ControlTaskState // TODO : ADCSBoxControllerState
 {
 public:
     /**

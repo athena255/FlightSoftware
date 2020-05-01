@@ -8,7 +8,7 @@
  * generate ADCS commands to apply
  * 
  */
-class ADCSCommander : public TimedControlTask<void> {
+class ADCSCommander : public TimedControlTask<void>, public ControlTaskState { // TODO : ADCSCommanderState
    public:
     /**
      * @brief Construct a new ADCSCommander.

@@ -6,7 +6,7 @@
 #include <common/StateField.hpp>
 #include <common/StateFieldRegistry.hpp>
 
-class DummyMainControlLoop : public ControlTask<void> {
+class DummyMainControlLoop : public ControlTask<void>, public ControlTaskState {
    protected:
     DebugTask debug_task;
 

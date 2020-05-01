@@ -4,7 +4,7 @@
 #include "TimedControlTask.hpp"
 #include <common/Event.hpp>
 
-class ClockManager : public TimedControlTask<void> {
+class ClockManager : public TimedControlTask<void>, public ControlTaskState {
    public:
     /**
      * @brief Construct a new Clock Manager

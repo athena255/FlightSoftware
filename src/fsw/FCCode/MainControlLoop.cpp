@@ -22,7 +22,8 @@
 
 MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
         const std::vector<DownlinkProducer::FlowData>& flow_data)
-    : ControlTask<void>(registry),
+    : ControlTask<void>(),
+      ControlTaskState(registry),
       field_creator_task(registry),
       clock_manager(registry, PAN::control_cycle_time),
       PIKSI_INITIALIZATION,
@@ -65,7 +66,7 @@ MainControlLoop::MainControlLoop(StateFieldRegistry& registry,
     gomspace.setup();
     dcdc.setup();
 
-    add_readable_field(memory_use_f);
+    this->add_readable_field(memory_use_f);
 
     eeprom_controller.init();
     // Since all telemetry fields have been added to the registry, initialize flows

@@ -12,14 +12,14 @@
 //
 // As flight software develops, this list will grow longer and shorter, but
 // eventually become zero.
-class FieldCreatorTask : public ControlTask<void> {
+class FieldCreatorTask : public ControlTask<void>, public ControlTaskState {
     public:
       ReadableStateField<double> time_f;
       ReadableStateField<lin::Vector3d> pos_f;
       ReadableStateField<lin::Vector3d> pos_baseline_f;
 
       FieldCreatorTask(StateFieldRegistry& r) : 
-        ControlTask<void>(r),
+        ControlTaskState(r),
         time_f("orbit.time", Serializer<double>(0.0, 18'446'744'073'709'551'616.0, 64)),
         pos_f("orbit.pos", Serializer<lin::Vector3d>(0,100000,100)),
         pos_baseline_f("orbit.baseline_pos", Serializer<lin::Vector3d>(0,100000,100))

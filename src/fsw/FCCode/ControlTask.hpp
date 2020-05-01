@@ -15,40 +15,26 @@
 #include <Arduino.h>
 #endif
 
-/**
- * @brief A control ControlTaskBase is a wrapper around any high-level ControlTaskBase that
- * interacts with satellite data.
- *
- * This class is subclassed heavily in order to provide multiple
- * implementations of execute() for different kinds of ControlTasks.
- */
-template <typename T>
-class ControlTask : protected debug_console {
-  public:
-    /**
-     * @brief Construct a new Control ControlTaskBase object
+/** @brief Contains all state fields that are owned by a given ControlTask. */
+class ControlTaskState : protected debug_console {
+public:
+    /** @brief Defaulted virtual destructor. */
+    virtual ~ControlTaskState() = default;
+
+protected:
+    /** @brief State for registry storing the control task's state fields. */
+    StateFieldRegistry &_registry;
+
+    /** @brief Require a StateFieldRegistry for construction. */
+    ControlTaskState() = delete;
+
+    /** @brief Create a control task state with the provided StateFieldRegistry.
      *
-     * @param name     Name of control ControlTaskBase
-     * @param registry Pointer to state field registry
-     */
-    ControlTask(StateFieldRegistry& registry) : _registry(registry) {}
+     *  @param registry State field registry. */
+    ControlTaskState(StateFieldRegistry &registry)
+    : _registry(registry) { }
 
-    /**
-     * @brief Run main method of control ControlTaskBase.
-     */
-    virtual T execute() = 0;
-
-    /**
-     * @brief Destroy the Control Task object
-     * 
-     * We need to have this destructor to avoid compilation errors.
-     */
-    virtual ~ControlTask() = default;
-
-  protected:
-    StateFieldRegistry& _registry;
-
-  private:
+private:
     void check_field_added(const bool added, const std::string& field_name) {
         if(!added) {
             #ifdef UNIT_TEST
@@ -69,12 +55,11 @@ class ControlTask : protected debug_console {
         }
     }
 
-  #ifdef UNIT_TEST
-  public:
-  #else
-  protected:
-  #endif
-
+#ifdef UNIT_TEST
+public:
+#else
+protected:
+#endif
     template<typename U>
     void add_internal_field(InternalStateField<U>& field) {
         const bool added = _registry.add_internal_field(
@@ -106,8 +91,7 @@ class ControlTask : protected debug_console {
         check_field_added(added, fault.name());
     }
 
-  private:
-
+private:
     void check_field_exists(const StateFieldBase* ptr, const std::string& field_type,
             const char* field_name) {
         if(!ptr) {
@@ -152,12 +136,11 @@ class ControlTask : protected debug_console {
         }
     }
 
-  #ifdef UNIT_TEST
-  public:
-  #else
-  protected:
-  #endif
-
+#ifdef UNIT_TEST
+public:
+#else
+protected:
+#endif
     template<typename U>
     InternalStateField<U>* find_internal_field(const char* field, const char* file, const unsigned int line) {
         InternalStateFieldBase* field_ptr = _registry.find_internal_field(field);
@@ -195,10 +178,38 @@ class ControlTask : protected debug_console {
 /* Convenient macros to find fields, events, and faults. The field/event/fault
  * argument will be automatically stringified so no need to include quotation
  * marks. */
-#define FIND_INTERNAL_FIELD(type, field) find_internal_field<type>(#field, __FILE__, __LINE__)
-#define FIND_READABLE_FIELD(type, field) find_readable_field<type>(#field, __FILE__, __LINE__)
-#define FIND_WRITABLE_FIELD(type, field) find_writable_field<type>(#field, __FILE__, __LINE__)
-#define FIND_EVENT(event)                find_event(#event, __FILE__, __LINE__)
-#define FIND_FAULT(fault)                find_fault(#fault, __FILE__, __LINE__)
+#define FIND_INTERNAL_FIELD(type, field) this->find_internal_field<type>(#field, __FILE__, __LINE__)
+#define FIND_READABLE_FIELD(type, field) this->find_readable_field<type>(#field, __FILE__, __LINE__)
+#define FIND_WRITABLE_FIELD(type, field) this->find_writable_field<type>(#field, __FILE__, __LINE__)
+#define FIND_EVENT(event)                this->find_event(#event, __FILE__, __LINE__)
+#define FIND_FAULT(fault)                this->find_fault(#fault, __FILE__, __LINE__)
+
+/**
+ * @brief A control ControlTaskBase is a wrapper around any high-level ControlTaskBase that
+ * interacts with satellite data.
+ *
+ * This class is subclassed heavily in order to provide multiple
+ * implementations of execute() for different kinds of ControlTasks.
+ */
+template <typename T>
+class ControlTask : protected debug_console {
+protected:
+    /**
+     * @brief Construct a new Control ControlTaskBase object
+     */
+    ControlTask() = default;
+
+public:
+    /**
+     * @brief Destroy the Control Task object
+     * 
+     * We need to have this destructor to avoid compilation errors.
+     */
+    virtual ~ControlTask() = default;
+    /**
+     * @brief Run main method of control ControlTaskBase.
+     */
+    virtual T execute() = 0;
+};
 
 #endif

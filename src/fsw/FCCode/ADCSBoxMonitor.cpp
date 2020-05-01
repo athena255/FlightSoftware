@@ -6,6 +6,7 @@
 ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry, 
     unsigned int offset, Devices::ADCS &_adcs)
     : TimedControlTask<void>(registry, "adcs_monitor", offset),
+    ControlTaskState(registry),
     adcs_system(_adcs),
     rwa_speed_rd_sr(adcs::rwa::min_speed_read, adcs::rwa::max_speed_read, 16*3), //referenced from I2C_Interface.doc
     rwa_speed_rd_f("adcs_monitor.rwa_speed_rd", rwa_speed_rd_sr),
@@ -64,40 +65,40 @@ ADCSBoxMonitor::ADCSBoxMonitor(StateFieldRegistry &registry,
         // add device availabilty to registry, and initialize value to 0
         for(unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
         {
-            add_readable_field(havt_read_vector[idx]);
+            this->add_readable_field(havt_read_vector[idx]);
             havt_read_vector[idx].set(false);
         }
 
         //actually add statefields to registry
-        add_readable_field(rwa_speed_rd_f);
-        add_readable_field(rwa_torque_rd_f);
-        add_readable_field(ssa_mode_f);
-        add_readable_field(ssa_vec_f);
+        this->add_readable_field(rwa_speed_rd_f);
+        this->add_readable_field(rwa_torque_rd_f);
+        this->add_readable_field(ssa_mode_f);
+        this->add_readable_field(ssa_vec_f);
 
         for(unsigned int i = 0; i<adcs::ssa::num_sun_sensors; i++){
-            add_readable_field(ssa_voltages_f[i]);
+            this->add_readable_field(ssa_voltages_f[i]);
         }
 
-        add_readable_field(mag1_vec_f);
-        add_readable_field(mag2_vec_f);
-        add_readable_field(gyr_vec_f);
-        add_readable_field(gyr_temp_f);
+        this->add_readable_field(mag1_vec_f);
+        this->add_readable_field(mag2_vec_f);
+        this->add_readable_field(gyr_vec_f);
+        this->add_readable_field(gyr_temp_f);
 
         //add flag state fields
-        add_readable_field(rwa_speed_rd_flag);
-        add_readable_field(rwa_torque_rd_flag);
-        add_readable_field(mag1_vec_flag);
-        add_readable_field(mag2_vec_flag);
-        add_readable_field(gyr_vec_flag);
-        add_readable_field(gyr_temp_flag);
+        this->add_readable_field(rwa_speed_rd_flag);
+        this->add_readable_field(rwa_torque_rd_flag);
+        this->add_readable_field(mag1_vec_flag);
+        this->add_readable_field(mag2_vec_flag);
+        this->add_readable_field(gyr_vec_flag);
+        this->add_readable_field(gyr_temp_flag);
 
-        add_readable_field(adcs_is_functional);
+        this->add_readable_field(adcs_is_functional);
         // add faults to registry
-        add_fault(adcs_functional_fault);
-        add_fault(wheel1_adc_fault);
-        add_fault(wheel2_adc_fault);
-        add_fault(wheel3_adc_fault);
-        add_fault(wheel_pot_fault);
+        this->add_fault(adcs_functional_fault);
+        this->add_fault(wheel1_adc_fault);
+        this->add_fault(wheel2_adc_fault);
+        this->add_fault(wheel3_adc_fault);
+        this->add_fault(wheel_pot_fault);
     }
 
 bool exceed_bounds(const std::array<float, 3>& input, const float min, const float max){

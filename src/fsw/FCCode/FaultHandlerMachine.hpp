@@ -12,7 +12,7 @@
  */
 class FaultHandlerMachine : public ControlTask<fault_response_t> {
   public:
-    explicit FaultHandlerMachine(StateFieldRegistry& r) : ControlTask<fault_response_t>(r) {}
+    explicit FaultHandlerMachine() {}
     FaultHandlerMachine& operator=(const FaultHandlerMachine& other) = delete;
     FaultHandlerMachine& operator=(FaultHandlerMachine&& other) = delete;
     virtual fault_response_t execute() = 0;

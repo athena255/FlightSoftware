@@ -2,7 +2,7 @@
 
 GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned int offset,
     Devices::Gomspace &_gs)
-    : TimedControlTask<void>(registry, "gomspace_rd", offset), gs(_gs), 
+    : TimedControlTask<void>(registry, "gomspace_rd", offset), ControlTaskState(registry), gs(_gs), 
 
     get_hk_fault("gomspace.get_hk", 1),
     low_batt_fault("gomspace.low_batt", 1),
@@ -101,79 +101,79 @@ GomspaceController::GomspaceController(StateFieldRegistry &registry, unsigned in
     gs_reboot_cmd_f("gomspace.gs_reboot_cmd", gs_reboot_cmd_sr)
 
     {
-        add_fault(get_hk_fault);
-        add_fault(low_batt_fault);
+        this->add_fault(get_hk_fault);
+        this->add_fault(low_batt_fault);
 
-        add_writable_field(batt_threshold_f);
+        this->add_writable_field(batt_threshold_f);
         batt_threshold_f.set(7300);
         
-        add_readable_field(vboost1_f);
-        add_readable_field(vboost2_f);
-        add_readable_field(vboost3_f);
+        this->add_readable_field(vboost1_f);
+        this->add_readable_field(vboost2_f);
+        this->add_readable_field(vboost3_f);
 
-        add_readable_field(vbatt_f);
+        this->add_readable_field(vbatt_f);
 
-        add_readable_field(curin1_f);
-        add_readable_field(curin2_f);
-        add_readable_field(curin3_f);
+        this->add_readable_field(curin1_f);
+        this->add_readable_field(curin2_f);
+        this->add_readable_field(curin3_f);
 
-        add_readable_field(cursun_f);
+        this->add_readable_field(cursun_f);
 
-        add_readable_field(cursys_f);
+        this->add_readable_field(cursys_f);
 
-        add_readable_field(curout1_f);
-        add_readable_field(curout2_f);
-        add_readable_field(curout3_f);
-        add_readable_field(curout4_f);
-        add_readable_field(curout5_f);
-        add_readable_field(curout6_f);
+        this->add_readable_field(curout1_f);
+        this->add_readable_field(curout2_f);
+        this->add_readable_field(curout3_f);
+        this->add_readable_field(curout4_f);
+        this->add_readable_field(curout5_f);
+        this->add_readable_field(curout6_f);
 
-        add_readable_field(output1_f);
-        add_readable_field(output2_f);
-        add_readable_field(output3_f);
-        add_readable_field(output4_f);
-        add_readable_field(output5_f);
-        add_readable_field(output6_f);
+        this->add_readable_field(output1_f);
+        this->add_readable_field(output2_f);
+        this->add_readable_field(output3_f);
+        this->add_readable_field(output4_f);
+        this->add_readable_field(output5_f);
+        this->add_readable_field(output6_f);
 
-        add_readable_field(wdt_i2c_time_left_f);
+        this->add_readable_field(wdt_i2c_time_left_f);
 
-        add_readable_field(counter_wdt_i2c_f);
+        this->add_readable_field(counter_wdt_i2c_f);
 
-        add_readable_field(counter_boot_f);
+        this->add_readable_field(counter_boot_f);
 
-        add_readable_field(temp1_f);
-        add_readable_field(temp2_f);
-        add_readable_field(temp3_f);
-        add_readable_field(temp4_f);
+        this->add_readable_field(temp1_f);
+        this->add_readable_field(temp2_f);
+        this->add_readable_field(temp3_f);
+        this->add_readable_field(temp4_f);
 
-        add_readable_field(bootcause_f);
+        this->add_readable_field(bootcause_f);
 
-        add_readable_field(battmode_f);
+        this->add_readable_field(battmode_f);
 
-        add_readable_field(pptmode_f);
+        this->add_readable_field(pptmode_f);
 
-        add_readable_field(heater_f);
+        this->add_readable_field(heater_f);
 
-        add_writable_field(power_cycle_output1_cmd_f);
-        add_writable_field(power_cycle_output2_cmd_f);
-        add_writable_field(power_cycle_output3_cmd_f);
-        add_writable_field(power_cycle_output4_cmd_f);
-        add_writable_field(power_cycle_output5_cmd_f);
-        add_writable_field(power_cycle_output6_cmd_f);
+        this->add_writable_field(power_cycle_output1_cmd_f);
+        this->add_writable_field(power_cycle_output2_cmd_f);
+        this->add_writable_field(power_cycle_output3_cmd_f);
+        this->add_writable_field(power_cycle_output4_cmd_f);
+        this->add_writable_field(power_cycle_output5_cmd_f);
+        this->add_writable_field(power_cycle_output6_cmd_f);
 
-        add_writable_field(pv1_output_cmd_f);
-        add_writable_field(pv2_output_cmd_f);
-        add_writable_field(pv3_output_cmd_f);
+        this->add_writable_field(pv1_output_cmd_f);
+        this->add_writable_field(pv2_output_cmd_f);
+        this->add_writable_field(pv3_output_cmd_f);
 
-        add_writable_field(ppt_mode_cmd_f);
+        this->add_writable_field(ppt_mode_cmd_f);
 
-        add_writable_field(heater_cmd_f);
+        this->add_writable_field(heater_cmd_f);
 
-        add_writable_field(counter_reset_cmd_f);
+        this->add_writable_field(counter_reset_cmd_f);
 
-        add_writable_field(gs_reset_cmd_f);
+        this->add_writable_field(gs_reset_cmd_f);
 
-        add_writable_field(gs_reboot_cmd_f);
+        this->add_writable_field(gs_reboot_cmd_f);
      }
 
 void GomspaceController::execute() {

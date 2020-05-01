@@ -8,7 +8,7 @@
  * @brief Using raw sensor inputs, determine the attitude and angular state
  * of the spacecraft.
  */
-class AttitudeComputer : public TimedControlTask<void> {
+class AttitudeComputer : public TimedControlTask<void>, public ControlTaskState { // TODO : AttitudeComputerState
    public:
     /**
      * @brief Construct a new Attitude Estimator.

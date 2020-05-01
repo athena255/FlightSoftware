@@ -3,7 +3,7 @@
 SimpleFaultHandler::SimpleFaultHandler(StateFieldRegistry& r, Fault* f,
     const std::vector<mission_state_t>& _active_states,
     mission_state_t rs) :
-        FaultHandlerMachine(r),
+        ControlTaskState(r),
         fault(f),
         active_states(_active_states),
         recommended_state(rs)

@@ -7,7 +7,7 @@
 #include "TimedControlTask.hpp"
 #include "Drivers/DockingSystem.hpp"
 
-class DockingController : public TimedControlTask<void> {
+class DockingController : public TimedControlTask<void>, public ControlTaskState {
    public:
     
     /**

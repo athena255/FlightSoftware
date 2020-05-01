@@ -14,7 +14,7 @@
 #include "radio_state_t.enum"
 #include "sat_designation_t.enum"
 
-class MissionManager : public TimedControlTask<void> {
+class MissionManager : public TimedControlTask<void>, public ControlTaskState {
    #ifdef UNIT_TEST
      friend class TestFixture;
    #endif

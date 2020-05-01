@@ -32,7 +32,7 @@ class PropState_HandlingFault;
 
 class PropState_Manual;
 
-class PropController : public TimedControlTask<void>
+class PropController : public TimedControlTask<void>, public ControlTaskState
 {
 public:
     PropController(StateFieldRegistry &registry, unsigned int offset);

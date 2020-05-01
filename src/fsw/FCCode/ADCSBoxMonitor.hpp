@@ -9,7 +9,7 @@
 * @brief Gets inputs from the ADCS box and dumps them into the state
 * fields listed below.
 */
-class ADCSBoxMonitor : public TimedControlTask<void>
+class ADCSBoxMonitor : public TimedControlTask<void>, public ControlTaskState // TODO : ADCSBoxMonitorState
 {
 public:
     /**

@@ -7,7 +7,7 @@
 #include "TimedControlTask.hpp"
 #include "Drivers/DCDC.hpp"
 
-class DCDCController : public TimedControlTask<void> {
+class DCDCController : public TimedControlTask<void>, public ControlTaskState {
    public:
     
     /**

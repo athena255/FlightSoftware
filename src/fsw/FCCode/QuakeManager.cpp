@@ -29,6 +29,7 @@
 // Quake driver setup is initialized when QuakeController constructor is called
 QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) : 
     TimedControlTask<void>(registry, "quake", offset),
+    ControlTaskState(registry),
     max_wait_cycles_f("radio.max_wait", Serializer<unsigned int>(PAN::one_day_ccno)),
     max_transceive_cycles_f("radio.max_transceive", Serializer<unsigned int>(PAN::one_day_ccno)),
     radio_err_f("radio.err", Serializer<int>(-90, 10)),
@@ -41,18 +42,18 @@ QuakeManager::QuakeManager(StateFieldRegistry &registry, unsigned int offset) :
     mo_idx(0),
     unexpected_flag(false)
 { 
-    add_writable_field(max_wait_cycles_f);
-    add_writable_field(max_transceive_cycles_f);
-    add_readable_field(radio_err_f);
-    add_internal_field(radio_mt_packet_f);
-    add_internal_field(radio_mt_len_f);
-    add_internal_field(radio_state_f);
-    add_internal_field(last_checkin_cycle_f);
-    add_writable_field(dump_telemetry_f);
+    this->add_writable_field(max_wait_cycles_f);
+    this->add_writable_field(max_transceive_cycles_f);
+    this->add_readable_field(radio_err_f);
+    this->add_internal_field(radio_mt_packet_f);
+    this->add_internal_field(radio_mt_len_f);
+    this->add_internal_field(radio_state_f);
+    this->add_internal_field(last_checkin_cycle_f);
+    this->add_writable_field(dump_telemetry_f);
 
     // Retrieve fields from registry
-    snapshot_size_fp = find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);
-    radio_mo_packet_fp = find_internal_field<char*>("downlink.ptr", __FILE__, __LINE__);
+    snapshot_size_fp = this->find_internal_field<size_t>("downlink.snap_size", __FILE__, __LINE__);
+    radio_mo_packet_fp = this->find_internal_field<char*>("downlink.ptr", __FILE__, __LINE__);
 
     cycle_of_entry = control_cycle_count;
 

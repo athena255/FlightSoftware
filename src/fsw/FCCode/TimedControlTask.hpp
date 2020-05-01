@@ -105,7 +105,8 @@ class TimedControlTaskBase {
  * @tparam T Return type of control task.
  */
 template<typename T>
-class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
+class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase,
+    private ControlTaskState { // TODO : Break out state fields to a TimedControlTaskState class
   private:
     /**
      * @brief The start time of this control task, relative
@@ -173,7 +174,8 @@ class TimedControlTask : public ControlTask<T>, public TimedControlTaskBase {
     TimedControlTask(StateFieldRegistry& registry,
                      const std::string& name,
                      const unsigned int _offset) :
-        ControlTask<T>(registry),
+        ControlTask<T>(),
+        ControlTaskState(registry),
         offset(us_to_duration(_offset + 1)),
         num_lates_field_name("timing." + name + ".num_lates"),
         num_lates_f(num_lates_field_name, Serializer<unsigned int>()),

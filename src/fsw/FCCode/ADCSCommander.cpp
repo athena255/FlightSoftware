@@ -10,6 +10,7 @@
 
 ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "adcs_commander", offset),
+    ControlTaskState(registry),
     filter_sr(0,1,8),
     rwa_mode_f("adcs_cmd.rwa_mode", Serializer<unsigned char>(2)),
     rwa_speed_cmd_f("adcs_cmd.rwa_speed_cmd", Serializer<f_vector_t>(
@@ -37,24 +38,24 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
         Serializer<float>(adcs::imu::min_eq_temp, adcs::imu::max_eq_temp, 8))
 {
     // For ADCS Controller
-    add_writable_field(rwa_mode_f);
-    add_writable_field(rwa_speed_cmd_f);
-    add_writable_field(rwa_torque_cmd_f);
-    add_writable_field(rwa_speed_filter_f);
-    add_writable_field(rwa_ramp_filter_f);
-    add_writable_field(mtr_mode_f);
-    add_writable_field(mtr_cmd_f);
-    add_writable_field(mtr_limit_f);
-    add_writable_field(ssa_voltage_filter_f);
-    add_writable_field(mag1_mode_f);
-    add_writable_field(mag2_mode_f);
-    add_writable_field(imu_mag_filter_f);
-    add_writable_field(imu_gyr_filter_f);
-    add_writable_field(imu_gyr_temp_filter_f);
-    add_writable_field(imu_gyr_temp_kp_f);
-    add_writable_field(imu_gyr_temp_ki_f);
-    add_writable_field(imu_gyr_temp_kd_f);
-    add_writable_field(imu_gyr_temp_desired_f);
+    this->add_writable_field(rwa_mode_f);
+    this->add_writable_field(rwa_speed_cmd_f);
+    this->add_writable_field(rwa_torque_cmd_f);
+    this->add_writable_field(rwa_speed_filter_f);
+    this->add_writable_field(rwa_ramp_filter_f);
+    this->add_writable_field(mtr_mode_f);
+    this->add_writable_field(mtr_cmd_f);
+    this->add_writable_field(mtr_limit_f);
+    this->add_writable_field(ssa_voltage_filter_f);
+    this->add_writable_field(mag1_mode_f);
+    this->add_writable_field(mag2_mode_f);
+    this->add_writable_field(imu_mag_filter_f);
+    this->add_writable_field(imu_gyr_filter_f);
+    this->add_writable_field(imu_gyr_temp_filter_f);
+    this->add_writable_field(imu_gyr_temp_kp_f);
+    this->add_writable_field(imu_gyr_temp_ki_f);
+    this->add_writable_field(imu_gyr_temp_kd_f);
+    this->add_writable_field(imu_gyr_temp_desired_f);
 
     // reserve memory
     havt_cmd_reset_vector_f.reserve(adcs::havt::Index::_LENGTH);
@@ -68,7 +69,7 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
         sprintf(buffer,"adcs_cmd.havt_reset");
         sprintf(buffer + strlen(buffer), "%u", idx);
         havt_cmd_reset_vector_f.emplace_back(buffer, bool_sr);
-        add_writable_field(havt_cmd_reset_vector_f[idx]);
+        this->add_writable_field(havt_cmd_reset_vector_f[idx]);
         havt_cmd_reset_vector_f[idx].set(false); // default commands to false (don't apply cmd)
     }
     for (unsigned int idx = adcs::havt::Index::IMU_GYR; idx < adcs::havt::Index::_LENGTH; idx++ )
@@ -77,18 +78,18 @@ ADCSCommander::ADCSCommander(StateFieldRegistry& registry, unsigned int offset) 
         sprintf(buffer,"adcs_cmd.havt_disable");
         sprintf(buffer + strlen(buffer), "%u", idx);
         havt_cmd_disable_vector_f.emplace_back(buffer, bool_sr);
-        add_writable_field(havt_cmd_disable_vector_f[idx]);
+        this->add_writable_field(havt_cmd_disable_vector_f[idx]);
         havt_cmd_disable_vector_f[idx].set(false); // default commands to false (don't apply cmd)
     }
 
     // find adcs state
-    adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
+    adcs_state_fp = this->find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
 
     // find outputs from AttitudeComputer
-    adcs_vec1_current_fp = find_writable_field<lin::Vector3f>("adcs.compute.vec1.current", __FILE__, __LINE__);
-    adcs_vec1_desired_fp = find_writable_field<lin::Vector3f>("adcs.compute.vec1.desired", __FILE__, __LINE__);
-    adcs_vec2_current_fp = find_writable_field<lin::Vector3f>("adcs.compute.vec2.current", __FILE__, __LINE__);
-    adcs_vec2_desired_fp = find_writable_field<lin::Vector3f>("adcs.compute.vec2.desired", __FILE__, __LINE__);
+    adcs_vec1_current_fp = this->find_writable_field<lin::Vector3f>("adcs.compute.vec1.current", __FILE__, __LINE__);
+    adcs_vec1_desired_fp = this->find_writable_field<lin::Vector3f>("adcs.compute.vec1.desired", __FILE__, __LINE__);
+    adcs_vec2_current_fp = this->find_writable_field<lin::Vector3f>("adcs.compute.vec2.current", __FILE__, __LINE__);
+    adcs_vec2_desired_fp = this->find_writable_field<lin::Vector3f>("adcs.compute.vec2.desired", __FILE__, __LINE__);
 
     // defaults, TODO: DECIDE DEFAULTS
     rwa_mode_f.set(adcs::RWAMode::RWA_DISABLED);

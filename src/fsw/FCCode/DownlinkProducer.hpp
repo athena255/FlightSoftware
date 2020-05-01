@@ -4,7 +4,7 @@
 #include "TimedControlTask.hpp"
 #include <common/constant_tracker.hpp>
 
-class DownlinkProducer : public TimedControlTask<void> {
+class DownlinkProducer : public TimedControlTask<void>, public ControlTaskState {
    public:
     TRACKED_CONSTANT_SC(unsigned int, num_bits_in_packet, 560);
 

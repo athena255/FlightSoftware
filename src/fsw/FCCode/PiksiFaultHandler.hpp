@@ -4,7 +4,7 @@
 #include "FaultHandlerMachine.hpp"
 #include "piksi_mode_t.enum"
 
-class PiksiFaultHandler : public FaultHandlerMachine {
+class PiksiFaultHandler : public FaultHandlerMachine, public ControlTaskState {
   public:
     //! Default maximum wait times
     TRACKED_CONSTANT_SC(unsigned int, default_no_cdgps_max_wait, PAN::one_day_ccno);

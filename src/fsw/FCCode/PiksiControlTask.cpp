@@ -5,6 +5,7 @@
 PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry, 
     unsigned int offset, Devices::Piksi &_piksi) 
     : TimedControlTask<void>(registry, "piksi", offset),
+    ControlTaskState(registry),
     piksi(_piksi),
     pos_f("piksi.pos", Serializer<d_vector_t>(0,100000,100)),
     vel_f("piksi.vel", Serializer<d_vector_t>(0,100000,100)),
@@ -15,14 +16,14 @@ PiksiControlTask::PiksiControlTask(StateFieldRegistry &registry,
     last_fix_time_f("piksi.last_fix_time"),
     last_rtkfix_ccno_f("piksi.last_rtkfix_ccno")
     {
-        add_readable_field(pos_f);
-        add_readable_field(vel_f);
-        add_readable_field(baseline_pos_f);
-        add_readable_field(current_state_f);
-        add_readable_field(fix_error_count_f);
-        add_readable_field(time_f);
-        add_internal_field(last_fix_time_f);
-        add_internal_field(last_rtkfix_ccno_f);
+        this->add_readable_field(pos_f);
+        this->add_readable_field(vel_f);
+        this->add_readable_field(baseline_pos_f);
+        this->add_readable_field(current_state_f);
+        this->add_readable_field(fix_error_count_f);
+        this->add_readable_field(time_f);
+        this->add_internal_field(last_fix_time_f);
+        this->add_internal_field(last_rtkfix_ccno_f);
 
         //register callbacks and begin the serial port
         piksi.setup();

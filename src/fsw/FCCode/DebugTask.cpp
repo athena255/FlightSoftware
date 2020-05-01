@@ -2,10 +2,11 @@
 
 DebugTask::DebugTask(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "debug", offset),
+      ControlTaskState(registry),
       start_cycle_f("cycle.start", Serializer<bool>()),
       auto_cycle_f("cycle.auto", Serializer<bool>()) {
-  add_writable_field(start_cycle_f);
-  add_writable_field(auto_cycle_f);
+  this->add_writable_field(start_cycle_f);
+  this->add_writable_field(auto_cycle_f);
   auto_cycle_f.set(false);
   init();
 }

@@ -41,7 +41,8 @@
  * 
  */ 
 
-class UplinkConsumer : public TimedControlTask<void>, public Uplink {
+class UplinkConsumer : public TimedControlTask<void>, public Uplink,
+        public ControlTaskState {
    public:
     
     /**

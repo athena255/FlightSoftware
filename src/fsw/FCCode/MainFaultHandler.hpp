@@ -4,7 +4,7 @@
 #include "FaultHandlerMachine.hpp"
 #include <vector>
 
-class MainFaultHandler : public FaultHandlerMachine {
+class MainFaultHandler : public FaultHandlerMachine, public ControlTaskState {
   #ifdef UNIT_TEST
     friend class TestFixtureMainFH;
   #endif
@@ -15,7 +15,7 @@ class MainFaultHandler : public FaultHandlerMachine {
      * 
      * @param r State field registry.
      */
-    explicit MainFaultHandler(StateFieldRegistry& r);
+    explicit MainFaultHandler(StateFieldRegistry &r);
 
     /**
      * @brief Acquire state fields that hadn't already been added to the registry

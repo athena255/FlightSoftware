@@ -18,6 +18,7 @@ const constexpr std::array<mission_state_t, 7> MissionManager::fault_nonresponsi
 
 MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "mission_ct", offset),
+    ControlTaskState(registry),
     detumble_safety_factor_f("detumble_safety_factor", Serializer<double>(0, 1, 10)),
     close_approach_trigger_dist_f("trigger_dist.close_approach", Serializer<double>(0, 10000, 14)),
     docking_trigger_dist_f("trigger_dist.docking", Serializer<double>(0, 100, 10)),
@@ -34,51 +35,51 @@ MissionManager::MissionManager(StateFieldRegistry& registry, unsigned int offset
     sat_designation_f("pan.sat_designation", Serializer<unsigned char>(2), 100),
     enter_close_approach_ccno_f("pan.enter_close_approach_ccno")
 {
-    add_writable_field(detumble_safety_factor_f);
-    add_writable_field(close_approach_trigger_dist_f);
-    add_writable_field(docking_trigger_dist_f);
-    add_writable_field(max_radio_silence_duration_f);
-    add_writable_field(docking_timeout_limit_f);
-    add_writable_field(adcs_state_f);
-    add_writable_field(docking_config_cmd_f);
-    add_internal_field(enter_docking_cycle_f);
-    add_writable_field(mission_state_f);
-    add_readable_field(is_deployed_f);
-    add_readable_field(deployment_wait_elapsed_f);
-    add_writable_field(sat_designation_f);
-    add_internal_field(enter_close_approach_ccno_f);
+    this->add_writable_field(detumble_safety_factor_f);
+    this->add_writable_field(close_approach_trigger_dist_f);
+    this->add_writable_field(docking_trigger_dist_f);
+    this->add_writable_field(max_radio_silence_duration_f);
+    this->add_writable_field(docking_timeout_limit_f);
+    this->add_writable_field(adcs_state_f);
+    this->add_writable_field(docking_config_cmd_f);
+    this->add_internal_field(enter_docking_cycle_f);
+    this->add_writable_field(mission_state_f);
+    this->add_readable_field(is_deployed_f);
+    this->add_readable_field(deployment_wait_elapsed_f);
+    this->add_writable_field(sat_designation_f);
+    this->add_internal_field(enter_close_approach_ccno_f);
 
     main_fault_handler = std::make_unique<MainFaultHandler>(registry);
     static_cast<MainFaultHandler*>(main_fault_handler.get())->init();
     SimpleFaultHandler::set_mission_state_ptr(&mission_state_f);
 
-    adcs_w_body_est_fp = find_readable_field<lin::Vector3f>("attitude_estimator.w_body", __FILE__, __LINE__);
+    adcs_w_body_est_fp = this->find_readable_field<lin::Vector3f>("attitude_estimator.w_body", __FILE__, __LINE__);
 
-    radio_state_fp = find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
-    last_checkin_cycle_fp = find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
+    radio_state_fp = this->find_internal_field<unsigned char>("radio.state", __FILE__, __LINE__);
+    last_checkin_cycle_fp = this->find_internal_field<unsigned int>("radio.last_comms_ccno", __FILE__, __LINE__);
 
-    prop_state_fp = find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
+    prop_state_fp = this->find_writable_field<unsigned int>("prop.state", __FILE__, __LINE__);
 
-    propagated_baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
+    propagated_baseline_pos_fp = this->find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
 
-    reboot_fp = find_writable_field<bool>("gomspace.gs_reboot_cmd", __FILE__, __LINE__);
+    reboot_fp = this->find_writable_field<bool>("gomspace.gs_reboot_cmd", __FILE__, __LINE__);
 
-    docked_fp = find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
+    docked_fp = this->find_readable_field<bool>("docksys.docked", __FILE__, __LINE__);
 
     low_batt_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("gomspace.low_batt.base", __FILE__, __LINE__));
+            this->find_writable_field<bool>("gomspace.low_batt.base", __FILE__, __LINE__));
     adcs_functional_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.functional_fault.base", __FILE__, __LINE__));
+            this->find_writable_field<bool>("adcs_monitor.functional_fault.base", __FILE__, __LINE__));
     wheel1_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__));
+            this->find_writable_field<bool>("adcs_monitor.wheel1_fault.base", __FILE__, __LINE__));
     wheel2_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__));
+            this->find_writable_field<bool>("adcs_monitor.wheel2_fault.base", __FILE__, __LINE__));
     wheel3_adc_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__));
+            this->find_writable_field<bool>("adcs_monitor.wheel3_fault.base", __FILE__, __LINE__));
     wheel_pot_fault_fp = static_cast<Fault*>(
-            find_writable_field<bool>("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__));
+            this->find_writable_field<bool>("adcs_monitor.wheel_pot_fault.base", __FILE__, __LINE__));
     pressurize_fail_fp = static_cast<Fault*>(
-            find_writable_field<bool>("prop.pressurize_fail.base", __FILE__, __LINE__));
+            this->find_writable_field<bool>("prop.pressurize_fail.base", __FILE__, __LINE__));
 
     // Initialize a bunch of variables
     detumble_safety_factor_f.set(initial_detumble_safety_factor);

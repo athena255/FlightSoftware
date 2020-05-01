@@ -4,6 +4,7 @@
 
 DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     const unsigned int offset) : TimedControlTask<void>(r, "downlink_ct", offset),
+                                 ControlTaskState(r),
                                  snapshot_ptr_f("downlink.ptr"),
                                  snapshot_size_bytes_f("downlink.snap_size"),
                                  shift_flows_id1_f("downlink.shift_id1", Serializer<unsigned char>(0,10,1)),
@@ -13,17 +14,17 @@ DownlinkProducer::DownlinkProducer(StateFieldRegistry& r,
     cycle_count_fp = find_readable_field<unsigned int>("pan.cycle_no", __FILE__, __LINE__);
 
     // Add snapshot fields to the registry
-    add_internal_field(snapshot_ptr_f);
-    add_internal_field(snapshot_size_bytes_f);
+    this->add_internal_field(snapshot_ptr_f);
+    this->add_internal_field(snapshot_size_bytes_f);
 
     // Add shift_flows statefield to registry and set it to default values
-    add_writable_field(shift_flows_id1_f);
-    add_writable_field(shift_flows_id2_f);
+    this->add_writable_field(shift_flows_id1_f);
+    this->add_writable_field(shift_flows_id2_f);
     shift_flows_id1_f.set(0);
     shift_flows_id2_f.set(0);
 
     // Add toggle command statefield to registry and set it to default of 0
-    add_writable_field(toggle_flow_id_f);
+    this->add_writable_field(toggle_flow_id_f);
     toggle_flow_id_f.set(0);
 }
 
@@ -75,7 +76,7 @@ size_t DownlinkProducer::compute_max_downlink_size() const {
     return compute_downlink_size(true);
 }
 
-static void add_bits_to_downlink_frame(const bit_array& field_bits,
+static void this->add_bits_to_downlink_frame(const bit_array& field_bits,
                                        char* snapshot_ptr,
                                        size_t& packet_offset,
                                        size_t& downlink_frame_offset)
@@ -132,7 +133,7 @@ void DownlinkProducer::execute() {
     // Add control cycle count to the initial packet
     cycle_count_fp->serialize();
     const bit_array& cycle_count_bits = cycle_count_fp->get_bit_array();
-    add_bits_to_downlink_frame(cycle_count_bits, snapshot_ptr, packet_offset,
+    this->add_bits_to_downlink_frame(cycle_count_bits, snapshot_ptr, packet_offset,
             downlink_frame_offset);
 
     for(auto const& flow : flows) {
@@ -142,7 +143,7 @@ void DownlinkProducer::execute() {
         // care to add a downlink packet delimeter if the current
         // packet size exceeds 70 bytes.
         const bit_array& flow_id_bits = flow.id_sr.get_bit_array();
-        add_bits_to_downlink_frame(flow_id_bits, snapshot_ptr, packet_offset,
+        this->add_bits_to_downlink_frame(flow_id_bits, snapshot_ptr, packet_offset,
             downlink_frame_offset);
 
         for(auto& field : flow.field_list) {
@@ -150,13 +151,13 @@ void DownlinkProducer::execute() {
             if (event) {
                 // Event should be serialized when it is signaled
                 const bit_array& event_bits = event->get_bit_array();
-                add_bits_to_downlink_frame(event_bits, snapshot_ptr, packet_offset,
+                this->add_bits_to_downlink_frame(event_bits, snapshot_ptr, packet_offset,
                     downlink_frame_offset);
             }
             else{
                 field->serialize();
                 const bit_array& field_bits = field->get_bit_array();
-                add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
+                this->add_bits_to_downlink_frame(field_bits, snapshot_ptr, packet_offset,
                     downlink_frame_offset);
             }
         }

@@ -9,21 +9,22 @@ constexpr float nan_f = std::numeric_limits<float>::quiet_NaN();
 
 AttitudeComputer::AttitudeComputer(StateFieldRegistry& registry, unsigned int offset) :
     TimedControlTask<void>(registry, "attitude_computer", offset),
+    ControlTaskState(registry),
     adcs_vec1_current_f("adcs.compute.vec1.current", Serializer<lin::Vector3f>(0, 1, 100)),
     adcs_vec1_desired_f("adcs.compute.vec1.desired", Serializer<lin::Vector3f>(0, 1, 100)),
     adcs_vec2_current_f("adcs.compute.vec2.current", Serializer<lin::Vector3f>(0, 1, 100)),
     adcs_vec2_desired_f("adcs.compute.vec2.desired", Serializer<lin::Vector3f>(0, 1, 100))
 {
-    add_writable_field(adcs_vec1_current_f);
-    add_writable_field(adcs_vec1_desired_f);
-    add_writable_field(adcs_vec2_current_f);
-    add_writable_field(adcs_vec2_desired_f);
+    this->add_writable_field(adcs_vec1_current_f);
+    this->add_writable_field(adcs_vec1_desired_f);
+    this->add_writable_field(adcs_vec2_current_f);
+    this->add_writable_field(adcs_vec2_desired_f);
 
-    adcs_state_fp = find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
-    q_body_eci_fp = find_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci", __FILE__, __LINE__);
-    ssa_vec_fp = find_readable_field<lin::Vector3f>("adcs_monitor.ssa_vec", __FILE__, __LINE__);
-    pos_fp = find_readable_field<lin::Vector3d>("orbit.pos", __FILE__, __LINE__);
-    baseline_pos_fp = find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
+    adcs_state_fp = this->find_writable_field<unsigned char>("adcs.state", __FILE__, __LINE__);
+    q_body_eci_fp = this->find_readable_field<lin::Vector4f>("attitude_estimator.q_body_eci", __FILE__, __LINE__);
+    ssa_vec_fp = this->find_readable_field<lin::Vector3f>("adcs_monitor.ssa_vec", __FILE__, __LINE__);
+    pos_fp = this->find_readable_field<lin::Vector3d>("orbit.pos", __FILE__, __LINE__);
+    baseline_pos_fp = this->find_readable_field<lin::Vector3d>("orbit.baseline_pos", __FILE__, __LINE__);
 
     // Initialize outputs to NaN values
     adcs_vec1_current_f.set({nan_f, nan_f, nan_f});

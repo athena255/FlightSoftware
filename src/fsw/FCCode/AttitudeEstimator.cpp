@@ -11,6 +11,7 @@
 AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     unsigned int offset) 
     : TimedControlTask<void>(registry, "adcs_estimator", offset),
+    ControlTaskState(registry),
     time_fp(FIND_READABLE_FIELD(double, orbit.time)),
     pos_fp(FIND_READABLE_FIELD(lin::Vector3d, orbit.pos)),
     mag1_vec_fp(FIND_READABLE_FIELD(lin::Vector3f, adcs_monitor.mag1_vec)),
@@ -23,12 +24,12 @@ AttitudeEstimator::AttitudeEstimator(StateFieldRegistry &registry,
     fro_P_est_f("attitude_estimator.fro_P", Serializer<float>(0.0, 0.1, 16))
     {
         //Writable fields
-        add_writable_field(mag_flag_f);
+        this->add_writable_field(mag_flag_f);
 
         //Add outputs
-        add_readable_field(q_body_eci_est_f);
-        add_readable_field(w_body_est_f);
-        add_readable_field(fro_P_est_f);
+        this->add_readable_field(q_body_eci_est_f);
+        this->add_readable_field(w_body_est_f);
+        this->add_readable_field(fro_P_est_f);
 
         // Default magnetometer
         mag_flag_f.set(false);

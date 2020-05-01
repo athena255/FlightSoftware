@@ -2,7 +2,9 @@
 
 DCDCController::DCDCController(StateFieldRegistry &registry, unsigned int offset,
     Devices::DCDC &_dcdc)
-    : TimedControlTask<void>(registry, "dcdc_ct", offset), dcdc(_dcdc),
+    : TimedControlTask<void>(registry, "dcdc_ct", offset),
+      ControlTaskState(registry),
+      dcdc(_dcdc),
       ADCSMotorDCDC_cmd_f("dcdc.ADCSMotor_cmd", Serializer<bool>()),
       SpikeDockDCDC_cmd_f("dcdc.SpikeDock_cmd", Serializer<bool>()),
       disable_cmd_f("dcdc.disable_cmd", Serializer<bool>()),
@@ -10,12 +12,12 @@ DCDCController::DCDCController(StateFieldRegistry &registry, unsigned int offset
       ADCSMotorDCDC_f("dcdc.ADCSMotor", Serializer<bool>()),
       SpikeDockDCDC_f("dcdc.SpikeDock", Serializer<bool>())
 {
-  add_writable_field(ADCSMotorDCDC_cmd_f);
-  add_writable_field(SpikeDockDCDC_cmd_f);
-  add_writable_field(disable_cmd_f);
-  add_writable_field(reset_cmd_f);
-  add_readable_field(ADCSMotorDCDC_f);
-  add_readable_field(SpikeDockDCDC_f);
+  this->add_writable_field(ADCSMotorDCDC_cmd_f);
+  this->add_writable_field(SpikeDockDCDC_cmd_f);
+  this->add_writable_field(disable_cmd_f);
+  this->add_writable_field(reset_cmd_f);
+  this->add_readable_field(ADCSMotorDCDC_f);
+  this->add_readable_field(SpikeDockDCDC_f);
 
   // Set default values
   ADCSMotorDCDC_cmd_f.set(dcdc.adcs_enabled());

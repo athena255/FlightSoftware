@@ -14,6 +14,7 @@ size_t g_fake_pressure_cycle_count = 15; // global
 
 PropController::PropController(StateFieldRegistry &registry, unsigned int offset)
     : TimedControlTask<void>(registry, "prop", offset),
+      ControlTaskState(registry),
       prop_state_f("prop.state", Serializer<unsigned int>(6)),
       cycles_until_firing("prop.cycles_until_firing", Serializer<unsigned int>(256)),
       sched_valve1_f("prop.sched_valve1", Serializer<unsigned int>(999)),
@@ -42,29 +43,29 @@ PropController::PropController(StateFieldRegistry &registry, unsigned int offset
 {
 
     PropulsionSystem.setup();
-    add_writable_field(prop_state_f);
-    add_writable_field(cycles_until_firing);
-    add_writable_field(sched_valve1_f);
-    add_writable_field(sched_valve2_f);
-    add_writable_field(sched_valve3_f);
-    add_writable_field(sched_valve4_f);
-    add_writable_field(sched_intertank1_f);
-    add_writable_field(sched_intertank2_f);
+    this->add_writable_field(prop_state_f);
+    this->add_writable_field(cycles_until_firing);
+    this->add_writable_field(sched_valve1_f);
+    this->add_writable_field(sched_valve2_f);
+    this->add_writable_field(sched_valve3_f);
+    this->add_writable_field(sched_valve4_f);
+    this->add_writable_field(sched_intertank1_f);
+    this->add_writable_field(sched_intertank2_f);
 
-    add_writable_field(max_pressurizing_cycles);
-    add_writable_field(threshold_firing_pressure);
-    add_writable_field(ctrl_cycles_per_filling_period);
-    add_writable_field(ctrl_cycles_per_cooling_period);
-    add_writable_field(tank1_valve);
+    this->add_writable_field(max_pressurizing_cycles);
+    this->add_writable_field(threshold_firing_pressure);
+    this->add_writable_field(ctrl_cycles_per_filling_period);
+    this->add_writable_field(ctrl_cycles_per_cooling_period);
+    this->add_writable_field(tank1_valve);
 
-    add_readable_field(tank2_pressure_f);
-    add_readable_field(tank2_temp_f);
-    add_readable_field(tank1_temp_f);
+    this->add_readable_field(tank2_pressure_f);
+    this->add_readable_field(tank2_temp_f);
+    this->add_readable_field(tank1_temp_f);
 
-    add_fault(pressurize_fail_fault_f);
-    add_fault(overpressure_fault_f);
-    add_fault(tank2_temp_high_fault_f);
-    add_fault(tank1_temp_high_fault_f);
+    this->add_fault(pressurize_fail_fault_f);
+    this->add_fault(overpressure_fault_f);
+    this->add_fault(tank2_temp_high_fault_f);
+    this->add_fault(tank1_temp_high_fault_f);
 
     TRACKED_CONSTANT(unsigned int, max_pressurizing_cycles_ic, 20);
     TRACKED_CONSTANT(float, threshold_firing_pressure_ic, 25.0f);

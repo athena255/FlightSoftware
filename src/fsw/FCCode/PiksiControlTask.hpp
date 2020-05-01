@@ -9,7 +9,7 @@
 
 #include "piksi_mode_t.enum"
 
-class PiksiControlTask : public TimedControlTask<void>
+class PiksiControlTask : public TimedControlTask<void>, public ControlTaskState
 {
 public:
     TRACKED_CONSTANT_SC(unsigned int, DEAD_CYCLE_COUNT, 1000);

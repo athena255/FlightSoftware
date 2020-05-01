@@ -31,7 +31,7 @@
  * Essentially points mo_buffer_copy + mo_idx*packet_size to the next
  * 70 bytes of data that should be downlinked.
  */
-class QuakeManager : public TimedControlTask<void> {
+class QuakeManager : public TimedControlTask<void>, public ControlTaskState {
 public:
     QuakeManager(StateFieldRegistry &registry, unsigned int offset);
 

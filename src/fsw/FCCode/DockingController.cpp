@@ -2,19 +2,21 @@
 
 DockingController::DockingController(StateFieldRegistry &registry, unsigned int offset,
     Devices::DockingSystem &_docksys)
-    : TimedControlTask<void>(registry, "docking_ct", offset), docksys(_docksys),
+    : TimedControlTask<void>(registry, "docking_ct", offset),
+      ControlTaskState(registry),
+      docksys(_docksys),
       docking_step_angle_f("docksys.step_angle", Serializer<float>(0, 180, 16)),
       docking_step_delay_f("docksys.step_delay", Serializer<unsigned int>()),
       docked_f("docksys.docked", Serializer<bool>()),
       dock_config_f("docksys.dock_config", Serializer<bool>()),
       is_turning_f("docksys.is_turning", Serializer<bool>())
 {
-  add_readable_field(docked_f);
-  add_readable_field(dock_config_f);
-  add_readable_field(is_turning_f);
+  this->add_readable_field(docked_f);
+  this->add_readable_field(dock_config_f);
+  this->add_readable_field(is_turning_f);
 
-  add_writable_field(docking_step_angle_f);
-  add_writable_field(docking_step_delay_f);
+  this->add_writable_field(docking_step_angle_f);
+  this->add_writable_field(docking_step_delay_f);
 
   // Set default values
   docked_f.set(false);

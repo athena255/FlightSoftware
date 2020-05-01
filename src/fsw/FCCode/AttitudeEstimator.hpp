@@ -30,7 +30,7 @@
  *  The filter, when in the initialized state, will provide attitude, angular
  *  rate, and a state covariance criterion as outputs. If the filter is
  *  uninitialized, all estimation state fields will be set to NaN. */
-class AttitudeEstimator : public TimedControlTask<void> {
+class AttitudeEstimator : public TimedControlTask<void>, public ControlTaskState { // TODO : AttitudeEstimatorState
    public:
     /**
      * @brief Construct a new Attitude Estimator.

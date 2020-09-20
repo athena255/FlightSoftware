@@ -103,8 +103,11 @@ class Case(object):
         assert type(finished) is bool
         self._finished = finished
 
-    def setup_case(self, simulation):
-        self.sim = simulation
+    def setup_case(self):
+        if self.sim_duration > 0:
+            # TODO set up simulation
+            pass
+
         self.logger.start()
         self.logger.put("[TESTCASE] Starting testcase.")
         self._setup_case()

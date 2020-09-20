@@ -48,10 +48,10 @@ class PTest(object):
         self.is_running = True
         self.set_up_devices()
         self.set_up_radios()
-        self.set_up_sim()
+        self.set_up_testcase()
 
         try:
-            self.sim.start()
+            self.testcase.start()
         except TestCaseFailure as failure:
             tb = traceback.format_exc()
             self.sim.testcase.logger.put(tb)
@@ -60,7 +60,7 @@ class PTest(object):
                 self.sim.testcase.logger.stop()
                 time.sleep(1.5) # Allow time for the logger to stop
                 self.stop_all("Exiting due to testcase failure.")
-        
+
         if self.is_interactive:
             self.set_up_cmd_prompt()
         else:
@@ -149,7 +149,7 @@ class PTest(object):
                     self.tlm_config)
                 self.radios[radio_name] = radio_session
 
-    def set_up_sim(self):
+    def set_up_testcase(self):
         """
         Starts up the test case and the MATLAB simulation if it is required by the testcase.
         """
@@ -157,12 +157,10 @@ class PTest(object):
         _ = __import__("ptest.cases")
         testcases = getattr(_, "cases")
         try:
-            testcase = getattr(testcases, self.testcase_name)
+            self.testcase = getattr(testcases, self.testcase_name)
         except:
             self.stop_all(f"Nonexistent test case: {self.testcase_name}")
         print(f"Running mission testcase {self.testcase_name}.")
-
-        self.sim = Simulation(self.is_interactive, self.devices, self.random_seed, testcase(self.simulation_run_dir))
 
     def set_up_cmd_prompt(self):
         # Set up user command prompt
